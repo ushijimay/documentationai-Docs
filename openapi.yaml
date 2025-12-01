@@ -1,0 +1,237 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: Mentor3.ai API
+  license:
+    name: MIT
+servers:
+  - url: https://api.mentor3.ai/v1
+paths:
+  /courses:
+    get:
+      summary: Retrieve a list of all available courses in the Mentor3.ai platform, including their titles, descriptions, difficulty levels, and enrollment counts. This endpoint supports filtering by subject area and sorting by popularity to help learners discover relevant content efficiently.
+      operationId: listCourses
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of courses to return in a single request, with a maximum allowed value of 100 to ensure optimal performance and prevent excessive data transfer.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: A successful response containing a paginated list of courses with detailed metadata including learning objectives, prerequisites, and estimated completion times for each course.
+          headers:
+            x-next:
+              description: A hyperlink pointing to the next page of results when additional courses exist beyond the current response, enabling efficient pagination through large course catalogs.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Courses'
+        default:
+          description: An error response indicating issues such as invalid authentication credentials, server unavailability, or malformed request parameters that prevented successful course retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new course in the Mentor3.ai platform with specified learning objectives, content modules, and assessment criteria. This endpoint allows educators to design comprehensive learning experiences with adaptive difficulty scaling and progress tracking.
+      operationId: createCourses
+      responses:
+        201:
+          description: Confirmation that the course has been successfully created, including the unique course identifier and initial configuration details for immediate content population and learner enrollment.
+        default:
+          description: An error response indicating validation failures, permission issues, or system constraints that prevented course creation, with specific error codes for troubleshooting.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /courses/{courseId}:
+    get:
+      summary: Fetch detailed information about a specific course including its complete curriculum structure, learning modules, assessment methods, and current enrollment statistics. This endpoint provides comprehensive course metadata essential for learners and administrators.
+      operationId: showCourseById
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          description: The unique identifier for the course to retrieve, typically a UUID or alphanumeric string that distinguishes this course from others in the platform.
+          schema:
+            type: string
+      responses:
+        200:
+          description: A detailed course object containing all relevant information including module breakdowns, prerequisites, learning outcomes, and enrollment requirements for successful course completion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Courses'
+        default:
+          description: An error response for scenarios such as non-existent course IDs, access restrictions, or temporary service disruptions affecting course data retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an existing course's configuration, content structure, or learning parameters to reflect new educational requirements or improved teaching methodologies. This endpoint enables iterative course improvement based on learner feedback and performance data.
+      operationId: updateCourse
+      responses:
+        200:
+          description: Successful course update confirmation with modified attributes and version information to track changes over time.
+        default:
+          description: Error response indicating validation issues, permission constraints, or conflicts that prevented the course update operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    get:
+      summary: Retrieve a comprehensive list of platform users including learners, educators, and administrators with their roles, enrollment status, and activity metrics. This endpoint supports administrative oversight and user management across the learning ecosystem.
+      operationId: listUsers
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of user records to return per request, capped at 100 for performance optimization.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successful retrieval of user list with pagination support and detailed user profiles including learning preferences and progress statistics.
+          headers:
+            x-next:
+              description: Link to next page of results for large user datasets.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        default:
+          description: Error response for authentication failures or system errors during user list retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Register a new user account in the Mentor3.ai platform with appropriate role assignment and initial profile configuration. This endpoint handles user onboarding and sets up learning preferences for personalized experiences.
+      operationId: createUsers
+      responses:
+        201:
+          description: Successful user creation with account credentials and initial setup instructions.
+        default:
+          description: Error response indicating registration validation failures or duplicate account issues.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /lessons:
+    get:
+      summary: Access all available lessons across courses with filtering capabilities by difficulty, subject, and completion status. This endpoint enables learners to discover content and track their learning journey comprehensively.
+      operationId: listLessons
+      parameters:
+        - name: limit
+          in: query
+          description: Number of lessons to return per request, limited to 100 for optimal loading performance.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successful lesson list retrieval with metadata including estimated duration, prerequisites, and learning objectives.
+          headers:
+            x-next:
+              description: Pagination link for accessing additional lesson results.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lessons'
+        default:
+          description: Error response for authentication issues or service unavailability during lesson retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new lesson within an existing course, defining content structure, assessments, and learning objectives. This endpoint supports content authoring and curriculum development by educators.
+      operationId: createLessons
+      responses:
+        201:
+          description: Lesson creation confirmation with unique identifier and content upload instructions.
+        default:
+          description: Error response for validation failures or permission restrictions during lesson creation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Course:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Courses:
+      type: array
+      items:
+        $ref: '#/components/schemas/Course'
+    User:
+      required:
+        - id
+        - email
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        role:
+          type: string
+        enrolledCourses:
+          type: array
+          items:
+            type: string
+    Users:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    Lesson:
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        courseId:
+          type: string
+        difficulty:
+          type: string
+    Lessons:
+      type: array
+      items:
+        $ref: '#/components/schemas/Lesson'
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

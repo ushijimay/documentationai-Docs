@@ -1,0 +1,194 @@
+---
+title: Authentication
+description: Learn how to authenticate with Mentor3.ai APIs
+---
+
+## API Authentication Overview
+
+Mentor3.ai uses OAuth 2.0 and API keys for secure access to our learning platform APIs. Authentication ensures that only authorized users and applications can access protected resources. We support multiple authentication methods to accommodate different integration scenarios.
+
+<Callout kind="info">All API requests must include valid authentication credentials to prevent unauthorized access.</Callout>
+
+## Authentication Methods
+
+<Tabs>
+  <Tab title="API Keys" icon="key">
+    Use API keys for server-to-server communication.
+    
+    <ParamField path="api_key" param-type="string" required="true">
+      Your unique API key obtained from the dashboard.
+    </ParamField>
+    
+    <Request tabs="cURL,Python">
+      ```bash
+curl -X GET "https://api.mentor3.ai/v1/courses" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+      ```
+      ```python
+import requests
+
+headers = {
+  'Authorization': f'Bearer YOUR_API_KEY'
+}
+
+response = requests.get('https://api.mentor3.ai/v1/courses', headers=headers)
+print(response.json())
+      ```
+    </Request>
+  </Tab>
+  <Tab title="OAuth 2.0" icon="lock">
+    Implement OAuth 2.0 for user-based authentication.
+    
+    <Steps>
+      <Step title="Register Application" icon="settings">
+        Create an OAuth application in your dashboard.
+      </Step>
+      <Step title="Request Authorization" icon="send">
+        Direct users to the authorization endpoint.
+        ````javascript
+const authUrl = 'https://api.mentor3.ai/oauth/authorize?' +
+  'client_id=YOUR_CLIENT_ID&' +
+  'redirect_uri=YOUR_REDIRECT_URI&' +
+  'response_type=code&' +
+  'scope=read+write';
+
+window.location.href = authUrl;
+````
+      </Step>
+      <Step title="Exchange Code" icon="refresh-cw">
+        Exchange authorization code for access token.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Token Management
+
+Access tokens have a limited lifespan for security. Implement token refresh logic to maintain continuous API access.
+
+<Expandable title="Token Refresh Process" default-open="false">
+  When an access token expires, use the refresh token to obtain a new one without user interaction.
+  
+  ```javascript
+const refreshToken = async (refreshToken) => {
+  const response = await fetch('/oauth/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: 'YOUR_CLIENT_ID',
+      client_secret: 'YOUR_CLIENT_SECRET'
+    })
+  });
+  
+  return response.json();
+};
+```
+</Expandable>
+
+## Security Best Practices
+
+<ExpandableGroup>
+  <Expandable title="Store Credentials Securely" default-open="true">
+    Never expose API keys or tokens in client-side code. Use environment variables or secure key management systems.
+  </Expandable>
+  <Expandable title="Implement Rate Limiting" default-open="false">
+    Respect API rate limits to avoid service disruptions. Implement exponential backoff for retries.
+  </Expandable>
+  <Expandable title="Monitor Access Logs" default-open="false">
+    Regularly review authentication logs for suspicious activity and unauthorized access attempts.
+  </Expandable>
+</ExpandableGroup>
+
+## Troubleshooting Authentication Issues
+
+Common authentication problems and their solutions:
+
+| Issue | Symptom | Solution |
+|-------|---------|----------|
+| Invalid Token | 401 Unauthorized | Refresh or re-authenticate |
+| Rate Limited | 429 Too Many Requests | Implement backoff strategy |
+| Expired Key | 403 Forbidden | Generate new API key |
+
+<Callout kind="danger">If you suspect your credentials have been compromised, revoke them immediately and generate new ones.</Callout>
+
+## Integration Examples
+
+Here's how to authenticate in different programming environments:
+
+<CodeGroup tabs="JavaScript,PHP,Java">
+  ```javascript
+const authenticate = async (apiKey) => {
+  const response = await fetch('/api/user/profile', {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error('Authentication failed');
+  }
+  
+  return response.json();
+};
+```
+  ```php
+<?php
+$apiKey = 'YOUR_API_KEY';
+$ch = curl_init('https://api.mentor3.ai/v1/user/profile');
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+  'Authorization: Bearer ' . $apiKey,
+  'Content-Type: application/json'
+]);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if ($httpCode !== 200) {
+  throw new Exception('Authentication failed');
+}
+
+curl_close($ch);
+?>
+```
+  ```java
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+public class Mentor3ApiClient {
+  private final HttpClient client = HttpClient.newHttpClient();
+  private final String apiKey;
+  
+  public Mentor3ApiClient(String apiKey) {
+    this.apiKey = apiKey;
+  }
+  
+  public String getUserProfile() throws IOException, InterruptedException {
+    HttpRequest request = HttpRequest.newBuilder()
+      .uri(URI.create("https://api.mentor3.ai/v1/user/profile"))
+      .header("Authorization", "Bearer " + apiKey)
+      .header("Content-Type", "application/json")
+      .GET()
+      .build();
+    
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+    if (response.statusCode() != 200) {
+      throw new RuntimeException("Authentication failed: " + response.statusCode());
+    }
+    
+    return response.body();
+  }
+}
+```
+</CodeGroup>
+
+For additional support with authentication, refer to our API documentation or contact the developer support team.

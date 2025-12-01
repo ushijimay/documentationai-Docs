@@ -1,0 +1,202 @@
+---
+title: Integrations
+description: Connect Mentor3.ai with your existing tools and platforms
+---
+
+## Integration Overview
+
+Mentor3.ai provides robust APIs and pre-built integrations to connect with popular educational platforms, learning management systems, and productivity tools. Our integration ecosystem enables seamless data flow and unified learning experiences.
+
+<Columns cols={3}>
+  <Card title="LMS Integration" icon="book-open" href="#lms">
+    Connect with Canvas, Moodle, and Blackboard.
+  </Card>
+  <Card title="Productivity Tools" icon="briefcase" href="#productivity">
+    Sync with Google Workspace and Microsoft 365.
+  </Card>
+  <Card title="Analytics Platforms" icon="bar-chart" href="#analytics">
+    Export data to Tableau and Power BI.
+  </Card>
+</Columns>
+
+## Learning Management Systems
+
+<Tabs>
+  <Tab title="Canvas" icon="grid">
+    <Steps>
+      <Step title="Generate API Key" icon="key">
+        Create an API access token in Canvas settings.
+      </Step>
+      <Step title="Configure Webhooks" icon="webhook">
+        Set up webhook endpoints for real-time data sync.
+        ````javascript
+const canvasConfig = {
+  baseUrl: 'https://your-canvas-instance.com',
+  accessToken: 'YOUR_CANVAS_TOKEN',
+  webhookSecret: 'YOUR_WEBHOOK_SECRET'
+};
+
+// Configure webhook for grade updates
+const webhookUrl = 'https://api.mentor3.ai/webhooks/canvas/grades';
+````
+      </Step>
+      <Step title="Map Courses" icon="link">
+        Link Canvas courses to Mentor3.ai learning pathways.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Moodle" icon="school">
+    <Steps>
+      <Step title="Enable Web Services" icon="settings">
+        Activate web services in Moodle administration.
+      </Step>
+      <Step title="Create Service" icon="plus-circle">
+        Set up a custom web service for Mentor3.ai.
+      </Step>
+      <Step title="Test Connection" icon="check-circle">
+        Verify data synchronization works correctly.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## API Integration Patterns
+
+Mentor3.ai supports multiple integration patterns depending on your use case and technical requirements.
+
+<ExpandableGroup>
+  <Expandable title="REST API Integration" default-open="true">
+    Use our RESTful APIs for direct integration with custom applications.
+    
+    <Request tabs="Create Course,Update Progress">
+      ```bash
+curl -X POST "https://api.mentor3.ai/v1/courses" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Introduction to AI",
+    "description": "Learn the basics of artificial intelligence",
+    "difficulty": "beginner"
+  }'
+      ```
+      ```bash
+curl -X PUT "https://api.mentor3.ai/v1/learners/123/progress" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "courseId": "ai101",
+    "completionPercentage": 75,
+    "lastAccessed": "2024-01-15T10:30:00Z"
+  }'
+      ```
+    </Request>
+  </Expandable>
+  <Expandable title="Webhook Integration" default-open="false">
+    Receive real-time notifications about learning events.
+  </Expandable>
+  <Expandable title="SSO Integration" default-open="false">
+    Implement single sign-on with SAML or OAuth providers.
+  </Expandable>
+</ExpandableGroup>
+
+## Productivity Tool Integration
+
+Connect Mentor3.ai with popular productivity suites for enhanced workflow integration.
+
+<Callout kind="info">Productivity integrations enable seamless content sharing and collaborative learning.</Callout>
+
+| Tool | Integration Features | Setup Time |
+|------|---------------------|------------|
+| Google Classroom | Assignment sync, grade import | 15 minutes |
+| Microsoft Teams | Channel notifications, file sharing | 20 minutes |
+| Slack | Progress updates, study group alerts | 10 minutes |
+| Zoom | Virtual classroom integration | 25 minutes |
+
+## Data Export and Analytics
+
+Export learning data to external analytics platforms for advanced reporting and insights.
+
+<CodeGroup tabs="Tableau Export,Power BI Connection">
+  ```python
+import pandas as pd
+import requests
+
+# Export learner data for Tableau
+def export_learner_data(api_key, start_date, end_date):
+    headers = {'Authorization': f'Bearer {api_key}'}
+    params = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'format': 'csv'
+    }
+    
+    response = requests.get('https://api.mentor3.ai/v1/analytics/learners', 
+                           headers=headers, params=params)
+    
+    with open('learner_data.csv', 'wb') as f:
+        f.write(response.content)
+    
+    return pd.read_csv('learner_data.csv')
+```
+  ```javascript
+// Power BI data connector
+const mentor3Connector = {
+  name: "Mentor3.ai",
+  dataSourceKind: "Mentor3",
+  getSchema: async () => {
+    const response = await fetch('/api/schema');
+    return response.json();
+  },
+  getData: async (query) => {
+    const response = await fetch('/api/analytics?' + new URLSearchParams(query));
+    return response.json();
+  }
+};
+```
+</CodeGroup>
+
+## Custom Integrations
+
+For unique requirements, our developer platform provides SDKs and extensive documentation for building custom integrations.
+
+<Expandable title="Available SDKs" default-open="false">
+  - **JavaScript/TypeScript SDK**: For web applications
+  - **Python SDK**: For data analysis and automation
+  - **Java SDK**: For enterprise applications
+  - **.NET SDK**: For Microsoft ecosystem integration
+</Expandable>
+
+## Security Considerations
+
+All integrations must follow security best practices to protect sensitive educational data.
+
+<Callout kind="danger">Always use HTTPS and implement proper authentication for all integration endpoints.</Callout>
+
+## Troubleshooting Integrations
+
+Common integration issues and solutions:
+
+<ExpandableGroup>
+  <Expandable title="Authentication Failures" default-open="false">
+    Verify API keys are valid and have appropriate permissions. Check token expiration.
+  </Expandable>
+  <Expandable title="Data Sync Issues" default-open="false">
+    Ensure webhook endpoints are accessible and can handle the expected data volume.
+  </Expandable>
+  <Expandable title="Rate Limiting" default-open="false">
+    Implement exponential backoff and respect API rate limits to avoid service disruptions.
+  </Expandable>
+</ExpandableGroup>
+
+## Support and Resources
+
+Our integration team provides dedicated support for complex implementations. Access our developer portal for comprehensive documentation, code samples, and community forums.
+
+<Video
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+  title="Mentor3.ai Integration Overview"
+  width="560"
+  height="315"
+/>
+
+For additional integration assistance, contact our partnerships team or visit the developer documentation.

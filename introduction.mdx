@@ -1,0 +1,111 @@
+---
+title: Introduction
+description: Overview of Mentor3.ai and its core capabilities
+---
+
+## Getting Started with Mentor3.ai
+
+Mentor3.ai is an AI-powered learning hub designed to personalize educational experiences for every learner. It leverages advanced machine learning algorithms to adapt content delivery, track progress, and provide intelligent recommendations. Whether you're a student seeking personalized study plans or an educator managing classroom dynamics, Mentor3.ai offers seamless integration and powerful analytics.
+
+<Columns cols={3}>
+  <Card title="Personalized Learning" icon="user" href="#personalized-learning">
+    Discover AI-driven study plans tailored to your learning style and pace.
+  </Card>
+  <Card title="Progress Analytics" icon="bar-chart" href="#analytics">
+    Track learning outcomes with comprehensive dashboards and insights.
+  </Card>
+  <Card title="Integration Ready" icon="plug" href="#integrations">
+    Connect with popular educational platforms and tools effortlessly.
+  </Card>
+</Columns>
+
+## Key Features
+
+Mentor3.ai stands out with its intelligent content adaptation system that analyzes learner behavior in real-time. The platform supports multiple learning formats including interactive quizzes, video lectures, and collaborative projects. Its API-first architecture enables easy integration with existing learning management systems.
+
+<Tabs>
+  <Tab title="Students" icon="user">
+    <Steps>
+      <Step title="Create Account" icon="user-plus">
+        Sign up with your email and verify your account.
+        ````javascript
+const signupData = {
+  email: 'student@example.com',
+  password: 'securePass123',
+  role: 'student'
+};
+
+fetch('/api/auth/signup', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(signupData)
+});
+````
+      </Step>
+      <Step title="Take Assessment" icon="clipboard-check">
+        Complete an initial assessment to personalize your learning path.
+      </Step>
+      <Step title="Start Learning" icon="play-circle">
+        Access customized courses and track your progress.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Educators" icon="users">
+    <Steps>
+      <Step title="Set Up Class" icon="folder-plus">
+        Create class groups and invite students.
+      </Step>
+      <Step title="Configure Curriculum" icon="settings">
+        Design learning objectives and assign content.
+      </Step>
+      <Step title="Monitor Progress" icon="eye">
+        Use analytics dashboard to track student performance.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Why Choose Mentor3.ai?
+
+Our platform uses cutting-edge AI to provide insights that traditional learning systems cannot. With features like predictive performance analysis and adaptive difficulty scaling, learners stay engaged while educators gain valuable data for curriculum improvement.
+
+<Callout kind="tip">Start with our quick assessment to get personalized recommendations immediately.</Callout>
+
+<Expandable title="Advanced Features" default-open="false">
+  Mentor3.ai includes advanced features like peer collaboration tools, progress prediction algorithms, and comprehensive reporting APIs. These capabilities make it suitable for institutions of all sizes.
+
+  <CodeGroup tabs="Python,Node.js">
+    ```python
+import requests
+
+response = requests.get('/api/learner/progress', 
+                       headers={'Authorization': 'Bearer YOUR_TOKEN'})
+print(response.json())
+```
+    ```javascript
+const axios = require('axios');
+
+const getProgress = async () => {
+  const response = await axios.get('/api/learner/progress', {
+    headers: { Authorization: 'Bearer YOUR_TOKEN' }
+  });
+  console.log(response.data);
+};
+```
+  </CodeGroup>
+</Expandable>
+
+## Getting Support
+
+Our documentation provides comprehensive guides for implementation and usage. For additional help, contact our support team or join our community forums.
+
+| Feature | Students | Educators | Administrators |
+|---------|----------|-----------|----------------|
+| Personalized Paths | ✓ | ✓ | ✓ |
+| Progress Tracking | ✓ | ✓ | ✓ |
+| Content Management | ✗ | ✓ | ✓ |
+| Analytics Dashboard | ✗ | ✓ | ✓ |
+
+Mentor3.ai transforms traditional learning by making education more accessible, engaging, and effective through intelligent automation and data-driven insights.
